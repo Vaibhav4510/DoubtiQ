@@ -56,8 +56,6 @@
 //   console.log(`🚀 Server running on port ${PORT}`);
 //   console.log(`📡 API available at http://localhost:${PORT}/api`);
 // });
-
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -86,25 +84,18 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/subscriptions', require('./routes/subscriptions'));
 app.use('/api/ads', require('./routes/ads'));
 
-
 // --------------------
-// MongoDB (serverless-safe)
+// MongoDB
 // --------------------
-if (mongoose.connection.readyState === 0) {
-  mongoose
-    .connect(process.env.MONGODB_URI)
-    .then(() => console.log('✅ MongoDB connected'))
-    .catch(err => console.error('❌ MongoDB error:', err.message));
-}
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.error('❌ MongoDB error:', err.message));
 
 // --------------------
 // Health check
 // --------------------
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'Backend running on Vercel',
-    mongoState: mongoose.connection.readyState
-  });
+app.get('/health', (req, res) => {
+  res.json({ ok: true });
 });
 
 // --------------------
@@ -118,17 +109,10 @@ app.use((err, req, res, next) => {
 });
 
 // --------------------
-// 404 handler
+// START SERVER (RENDER NEEDS THIS)
 // --------------------
-app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
-
-// --------------------
-// IMPORTANT
-// --------------------
-module.exports = app;
-
-
-
-
