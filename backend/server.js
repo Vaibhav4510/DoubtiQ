@@ -78,13 +78,14 @@ app.use(express.urlencoded({ extended: true }));
 // --------------------
 // Routes
 // --------------------
-app.use('/api/auth', require('../routes/auth'));
-app.use('/api/doubts', require('../routes/doubts'));
-app.use('/api/solutions', require('../routes/solutions'));
-app.use('/api/tutors', require('../routes/tutors'));
-app.use('/api/admin', require('../routes/admin'));
-app.use('/api/subscriptions', require('../routes/subscriptions'));
-app.use('/api/ads', require('../routes/ads'));
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/doubts', require('./routes/doubts'));
+app.use('/api/solutions', require('./routes/solutions'));
+app.use('/api/tutors', require('./routes/tutors'));
+app.use('/api/admin', require('./routes/admin'));
+app.use('/api/subscriptions', require('./routes/subscriptions'));
+app.use('/api/ads', require('./routes/ads'));
+
 
 // --------------------
 // MongoDB (serverless-safe)
