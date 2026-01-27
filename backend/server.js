@@ -60,53 +60,52 @@
 
 
 
-
-
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const dotenv = require('dotenv');
-
-dotenv.config();
+require('dotenv').config();
 
 const app = express();
 
+// --------------------
 // Middleware
+// --------------------
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: process.env.CLIENT_URL || '*',
   credentials: true
 }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.use('/api/auth', require('../routes/auth'));
-app.use('/api/doubts', require('../routes/doubts'));
-app.use('/api/solutions', require('../routes/solutions'));
-app.use('/api/tutors', require('../routes/tutors'));
-app.use('/api/admin', require('../routes/admin'));
-app.use('/api/subscriptions', require('../routes/subscriptions'));
-app.use('/api/ads', require('../routes/ads'));
-
-// MongoDB (serverless-safe)
+// --------------------
+// MongoDB (safe for serverless)
+// --------------------
 if (mongoose.connection.readyState === 0) {
   mongoose
     .connect(process.env.MONGODB_URI)
-    .then(() => console.log('✅ MongoDB Connected'))
-    .catch(err => console.error('❌ MongoDB Error:', err));
+    .then(() => console.log('✅ MongoDB connected'))
+    .catch(err => console.error('❌ MongoDB error:', err.message));
 }
 
-// Health check
+// --------------------
+// Health check (must always work)
+// --------------------
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'Backend running on Vercel' });
+  res.json({
+    ok: true,
+    mongoState: mongoose.connection.readyState
+  });
 });
 
-// 404
+// --------------------
+// 404 fallback
+// --------------------
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// ❌ NO app.listen()
+// --------------------
+// IMPORTANT: NO app.listen()
+// --------------------
 module.exports = app;
+
 
