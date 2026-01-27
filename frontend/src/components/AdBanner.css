@@ -1,0 +1,31 @@
+.ad-banner {
+  margin: 20px 0;
+}
+
+.ad-header {
+  text-align: center;
+  padding: 10px;
+  background: #f8f9fa;
+}
+
+.ad-footer {
+  text-align: center;
+  padding: 10px;
+  background: #f8f9fa;
+}
+
+.ad-sidebar {
+  position: sticky;
+  top: 20px;
+}
+
+.ad-link {
+  display: block;
+  text-decoration: none;
+}
+
+.ad-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+}

@@ -1,0 +1,170 @@
+.doubt-uploader {
+  max-width: 700px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.doubt-uploader .form-group {
+  margin-bottom: 25px;
+}
+
+.doubt-uploader .form-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.doubt-uploader .form-group input,
+.doubt-uploader .form-group textarea {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.3s;
+  background: white;
+  box-sizing: border-box;
+}
+
+.doubt-uploader .form-group input:focus,
+.doubt-uploader .form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}
+
+.doubt-uploader .form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.dropzone {
+  border: 2px dashed #667eea;
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+  position: relative;
+  overflow: hidden;
+}
+
+.dropzone::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.dropzone:hover::before {
+  left: 100%;
+}
+
+.dropzone:hover {
+  border-color: #764ba2;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+}
+
+.dropzone.active {
+  border-color: #28a745;
+  background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1));
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.2);
+}
+
+.dropzone p {
+  color: #666;
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.preview-container {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  display: block;
+  margin: 0 auto;
+}
+
+.remove-image {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  transition: all 0.3s;
+}
+
+.remove-image:hover {
+  background: linear-gradient(135deg, #c82333, #bd2130);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4);
+}
+
+.doubt-uploader .btn {
+  width: 100%;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.doubt-uploader .btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #764ba2, #667eea);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.doubt-uploader .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .doubt-uploader {
+    padding: 20px;
+    border-radius: 20px;
+  }
+  
+  .dropzone {
+    padding: 30px 20px;
+  }
+}

@@ -1,0 +1,70 @@
+.static-page {
+  padding: 44px 0 60px;
+}
+
+.static-card {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 24px;
+  padding: 28px 30px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: 0 16px 45px rgba(15, 23, 42, 0.14);
+}
+
+.static-card h1 {
+  margin: 0 0 10px;
+  color: var(--text-primary);
+  font-size: 1.8rem;
+}
+
+.static-card h2 {
+  margin: 24px 0 10px;
+  color: var(--text-primary);
+  font-size: 1.2rem;
+}
+
+.static-card p,
+.static-card li {
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+.static-card ul {
+  padding-left: 22px;
+}
+
+.static-meta {
+  margin-top: 6px;
+  color: var(--text-light);
+  font-size: 0.95rem;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 16px;
+}
+
+.contact-box {
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(99, 102, 241, 0.06);
+}
+
+.contact-box h3 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.contact-box a {
+  font-weight: 800;
+}
+
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

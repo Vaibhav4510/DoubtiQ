@@ -1,0 +1,140 @@
+.doubt-detail-page {
+  padding: 40px 0 60px;
+}
+
+.doubt-detail-card {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 24px;
+  padding: 24px 28px 32px;
+  box-shadow: 0 15px 45px rgba(15, 23, 42, 0.18);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.doubt-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.doubt-detail-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #111827;
+}
+
+.doubt-detail-meta {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.doubt-detail-section {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.doubt-detail-section h2,
+.doubt-detail-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 1.2rem;
+  color: #111827;
+}
+
+.doubt-detail-question {
+  background: #0b1220;
+  color: #e5e7eb;
+  border-radius: 16px;
+  padding: 16px 18px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.doubt-detail-image {
+  margin-top: 16px;
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+}
+
+.solution-steps {
+  padding-left: 22px;
+}
+
+.solution-steps li {
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+
+.solution-steps img {
+  margin-top: 8px;
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+.solution-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.solution-grid.has-video {
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: start;
+}
+
+.solution-left,
+.solution-right {
+  min-width: 0;
+}
+
+.solution-video {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.18);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.solution-subtitle {
+  margin: 16px 0 8px;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.solution-text p {
+  color: #374151;
+  line-height: 1.7;
+}
+
+.btn-view-details {
+  margin-right: 10px;
+}
+
+.doubt-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .doubt-detail-card {
+    padding: 18px 18px 26px;
+  }
+
+  .doubt-detail-header {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+  }
+  .solution-grid.has-video {
+    grid-template-columns: 1fr;
+  }
+}
+
