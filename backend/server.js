@@ -1,58 +1,112 @@
+// const express = require('express');
+// const mongoose = require('mongoose');
+// const cors = require('cors');
+// const dotenv = require('dotenv');
+// const path = require('path');
+
+// dotenv.config();
+
+// const app = express();
+
+// // Middleware
+// app.use(cors());
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+
+// // Serve uploaded files
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// // Routes
+// app.use('/api/auth', require('./routes/auth'));
+// app.use('/api/doubts', require('./routes/doubts'));
+// app.use('/api/solutions', require('./routes/solutions'));
+// app.use('/api/tutors', require('./routes/tutors'));
+// app.use('/api/admin', require('./routes/admin'));
+// app.use('/api/subscriptions', require('./routes/subscriptions'));
+// app.use('/api/ads', require('./routes/ads'));
+
+// // MongoDB Connection
+// mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/doubtiq', {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// })
+// .then(() => console.log('✅ MongoDB Connected Successfully'))
+// .catch(err => {
+//   console.error('❌ MongoDB Connection Error:', err);
+//   console.log('⚠️  Make sure MongoDB is running on your system');
+// });
+
+// // Error handling middleware
+// app.use((err, req, res, next) => {
+//   console.error('Error:', err);
+//   res.status(err.status || 500).json({
+//     message: err.message || 'Internal Server Error',
+//     error: process.env.NODE_ENV === 'development' ? err : {}
+//   });
+// });
+
+// // 404 handler
+// app.use((req, res) => {
+//   res.status(404).json({ message: 'Route not found' });
+// });
+
+// const PORT = process.env.PORT || 5000;
+
+// app.listen(PORT, () => {
+//   console.log(`🚀 Server running on port ${PORT}`);
+//   console.log(`📡 API available at http://localhost:${PORT}/api`);
+// });
+
+
+
+
+
+
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const path = require('path');
 
 dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 // Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/doubts', require('./routes/doubts'));
-app.use('/api/solutions', require('./routes/solutions'));
-app.use('/api/tutors', require('./routes/tutors'));
-app.use('/api/admin', require('./routes/admin'));
-app.use('/api/subscriptions', require('./routes/subscriptions'));
-app.use('/api/ads', require('./routes/ads'));
+app.use('/api/auth', require('../routes/auth'));
+app.use('/api/doubts', require('../routes/doubts'));
+app.use('/api/solutions', require('../routes/solutions'));
+app.use('/api/tutors', require('../routes/tutors'));
+app.use('/api/admin', require('../routes/admin'));
+app.use('/api/subscriptions', require('../routes/subscriptions'));
+app.use('/api/ads', require('../routes/ads'));
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/doubtiq', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('✅ MongoDB Connected Successfully'))
-.catch(err => {
-  console.error('❌ MongoDB Connection Error:', err);
-  console.log('⚠️  Make sure MongoDB is running on your system');
+// MongoDB (serverless-safe)
+if (mongoose.connection.readyState === 0) {
+  mongoose
+    .connect(process.env.MONGODB_URI)
+    .then(() => console.log('✅ MongoDB Connected'))
+    .catch(err => console.error('❌ MongoDB Error:', err));
+}
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'Backend running on Vercel' });
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(err.status || 500).json({
-    message: err.message || 'Internal Server Error',
-    error: process.env.NODE_ENV === 'development' ? err : {}
-  });
-});
-
-// 404 handler
+// 404
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-const PORT = process.env.PORT || 5000;
+// ❌ NO app.listen()
+module.exports = app;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📡 API available at http://localhost:${PORT}/api`);
-});
