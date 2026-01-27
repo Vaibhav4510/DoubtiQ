@@ -58,8 +58,6 @@
 // });
 
 
-
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -71,13 +69,25 @@ const app = express();
 // Middleware
 // --------------------
 app.use(cors({
-  origin: process.env.CLIENT_URL || '*',
+  origin: process.env.CLIENT_URL,
   credentials: true
 }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // --------------------
-// MongoDB (safe for serverless)
+// Routes
+// --------------------
+app.use('/api/auth', require('../routes/auth'));
+app.use('/api/doubts', require('../routes/doubts'));
+app.use('/api/solutions', require('../routes/solutions'));
+app.use('/api/tutors', require('../routes/tutors'));
+app.use('/api/admin', require('../routes/admin'));
+app.use('/api/subscriptions', require('../routes/subscriptions'));
+app.use('/api/ads', require('../routes/ads'));
+
+// --------------------
+// MongoDB (serverless-safe)
 // --------------------
 if (mongoose.connection.readyState === 0) {
   mongoose
@@ -87,25 +97,37 @@ if (mongoose.connection.readyState === 0) {
 }
 
 // --------------------
-// Health check (must always work)
+// Health check
 // --------------------
 app.get('/api/health', (req, res) => {
   res.json({
-    ok: true,
+    status: 'Backend running on Vercel',
     mongoState: mongoose.connection.readyState
   });
 });
 
 // --------------------
-// 404 fallback
+// Error handler
+// --------------------
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(err.status || 500).json({
+    message: err.message || 'Internal Server Error'
+  });
+});
+
+// --------------------
+// 404 handler
 // --------------------
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
 // --------------------
-// IMPORTANT: NO app.listen()
+// IMPORTANT
 // --------------------
 module.exports = app;
+
+
 
 
