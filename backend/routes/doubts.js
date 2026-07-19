@@ -10,7 +10,7 @@ const cloudinary = require('cloudinary').v2;
 
 const router = express.Router();
 
-// Cloudinary config (only used if env vars are present)
+
 if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -19,7 +19,7 @@ if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && proce
   });
 }
 
-// Configure multer for file uploads
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = path.join(__dirname, '../uploads');
@@ -50,7 +50,7 @@ const upload = multer({
   }
 });
 
-// Error handling for multer
+
 const handleMulterError = (err, req, res, next) => {
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
@@ -64,21 +64,19 @@ const handleMulterError = (err, req, res, next) => {
   next();
 };
 
-// @route   POST /api/doubts/upload
-// @desc    Upload a doubt (image or text)
-// @access  Private
+
 router.post('/upload', protect, upload.single('image'), handleMulterError, async (req, res) => {
   try {
     const { title, content } = req.body;
     let extractedText = content || '';
     let imageUrl = '';
 
-    // If image is uploaded, extract text using OCR and upload to Cloudinary (if configured)
+  
     if (req.file) {
       const localPath = req.file.path;
 
       try {
-        // 1) OCR from local file
+       
         extractedText = await extractTextFromImage(localPath);
       } catch (error) {
         console.error('OCR extraction failed:', error);
@@ -86,25 +84,25 @@ router.post('/upload', protect, upload.single('image'), handleMulterError, async
 
       try {
         if (cloudinary.config().cloud_name) {
-          // 2) Upload to Cloudinary
+       
           const uploadResult = await cloudinary.uploader.upload(localPath, {
             folder: 'doubtiq/doubts'
           });
           imageUrl = uploadResult.secure_url;
         } else {
-          // Fallback: keep local uploads if Cloudinary is not configured
+         
           imageUrl = `/uploads/${req.file.filename}`;
         }
       } catch (uploadErr) {
         console.error('Cloudinary upload failed, falling back to local file:', uploadErr);
         imageUrl = `/uploads/${req.file.filename}`;
       } finally {
-        // Remove local temp file if it exists
+       
         fs.unlink(localPath, () => {});
       }
     }
 
-    // Create doubt
+   
     const doubt = await Doubt.create({
       user: req.user.id,
       title: title || 'Untitled Doubt',
@@ -114,7 +112,7 @@ router.post('/upload', protect, upload.single('image'), handleMulterError, async
       priority: req.user.subscription?.type === 'premium' ? 'high' : 'normal'
     });
 
-    // Try to find matching solution
+    
     if (extractedText) {
       const matchedSolution = await findMatchingSolution(extractedText);
       
@@ -123,7 +121,7 @@ router.post('/upload', protect, upload.single('image'), handleMulterError, async
         doubt.matchedSolution = matchedSolution._id;
         await doubt.save();
 
-        // Populate the solution with all fields including steps
+    
         const populatedSolution = await Solution.findById(matchedSolution._id)
           .populate('doubt', 'title content extractedText');
 
@@ -135,7 +133,7 @@ router.post('/upload', protect, upload.single('image'), handleMulterError, async
       }
     }
 
-    // No match found - return doubt for submission
+
     res.json({
       doubt,
       matched: false,
@@ -147,9 +145,7 @@ router.post('/upload', protect, upload.single('image'), handleMulterError, async
   }
 });
 
-// @route   POST /api/doubts/:id/submit
-// @desc    Submit doubt to tutors
-// @access  Private
+
 router.post('/:id/submit', protect, async (req, res) => {
   try {
     const doubt = await Doubt.findById(req.params.id);
@@ -172,9 +168,7 @@ router.post('/:id/submit', protect, async (req, res) => {
   }
 });
 
-// @route   GET /api/doubts/my-doubts
-// @desc    Get user's doubts
-// @access  Private
+
 router.get('/my-doubts', protect, async (req, res) => {
   try {
     const doubts = await Doubt.find({ 
@@ -193,9 +187,7 @@ router.get('/my-doubts', protect, async (req, res) => {
   }
 });
 
-// @route   DELETE /api/doubts/:id
-// @desc    Delete doubt (soft delete for users)
-// @access  Private
+
 router.delete('/:id', protect, async (req, res) => {
   try {
     const doubt = await Doubt.findById(req.params.id);
@@ -204,12 +196,11 @@ router.delete('/:id', protect, async (req, res) => {
       return res.status(404).json({ message: 'Doubt not found' });
     }
 
-    // Check if user owns this doubt or is admin
+ 
     if (doubt.user.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
-    // Soft delete for regular users, hard delete for admin
     if (req.user.role === 'admin') {
       await Doubt.findByIdAndDelete(req.params.id);
       return res.json({ message: 'Doubt permanently deleted' });
@@ -225,9 +216,6 @@ router.delete('/:id', protect, async (req, res) => {
   }
 });
 
-// @route   GET /api/doubts/:id
-// @desc    Get single doubt and increment tutor solution views
-// @access  Private
 router.get('/:id', protect, async (req, res) => {
   try {
     const doubt = await Doubt.findById(req.params.id)
@@ -240,7 +228,7 @@ router.get('/:id', protect, async (req, res) => {
       return res.status(404).json({ message: 'Doubt not found' });
     }
 
-    // Check authorization
+
     if (
       doubt.user._id.toString() !== req.user.id &&
       req.user.role !== 'admin' &&
@@ -249,7 +237,6 @@ router.get('/:id', protect, async (req, res) => {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
-    // Increment views for the tutor's solution, if present
     if (doubt.solution?._id) {
       try {
         await Solution.findByIdAndUpdate(doubt.solution._id, { $inc: { views: 1 } });
