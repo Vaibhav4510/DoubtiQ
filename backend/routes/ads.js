@@ -4,9 +4,7 @@ const { protect, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
-// @route   GET /api/ads
-// @desc    Get active ads (public for free users)
-// @access  Public
+
 router.get('/', async (req, res) => {
   try {
     const { position } = req.query;
@@ -18,7 +16,7 @@ router.get('/', async (req, res) => {
 
     const ads = await Ad.find(query).sort({ createdAt: -1 });
 
-    // Increment impressions
+
     ads.forEach(ad => {
       ad.impressions += 1;
       ad.save();
@@ -31,9 +29,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route   POST /api/ads
-// @desc    Create an ad
-// @access  Private (Admin)
+
 router.post('/', protect, authorize('admin'), async (req, res) => {
   try {
     const { title, imageUrl, link, position } = req.body;
@@ -52,9 +48,7 @@ router.post('/', protect, authorize('admin'), async (req, res) => {
   }
 });
 
-// @route   GET /api/ads/all
-// @desc    Get all ads (admin)
-// @access  Private (Admin)
+
 router.get('/all', protect, authorize('admin'), async (req, res) => {
   try {
     const ads = await Ad.find().sort({ createdAt: -1 });
@@ -65,9 +59,7 @@ router.get('/all', protect, authorize('admin'), async (req, res) => {
   }
 });
 
-// @route   PUT /api/ads/:id
-// @desc    Update an ad
-// @access  Private (Admin)
+
 router.put('/:id', protect, authorize('admin'), async (req, res) => {
   try {
     const ad = await Ad.findByIdAndUpdate(
@@ -87,9 +79,7 @@ router.put('/:id', protect, authorize('admin'), async (req, res) => {
   }
 });
 
-// @route   DELETE /api/ads/:id
-// @desc    Delete an ad
-// @access  Private (Admin)
+
 router.delete('/:id', protect, authorize('admin'), async (req, res) => {
   try {
     const ad = await Ad.findByIdAndDelete(req.params.id);
@@ -105,9 +95,7 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
   }
 });
 
-// @route   POST /api/ads/:id/click
-// @desc    Track ad click
-// @access  Public
+
 router.post('/:id/click', async (req, res) => {
   try {
     const ad = await Ad.findById(req.params.id);
