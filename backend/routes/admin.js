@@ -7,13 +7,11 @@ const { protect, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
-// All routes require admin role
+
 router.use(protect);
 router.use(authorize('admin'));
 
-// @route   GET /api/admin/doubts
-// @desc    Get all doubts
-// @access  Private (Admin)
+
 router.get('/doubts', async (req, res) => {
   try {
     const { status } = req.query;
@@ -33,9 +31,7 @@ router.get('/doubts', async (req, res) => {
   }
 });
 
-// @route   PUT /api/admin/doubts/:id/verify
-// @desc    Verify doubt before assigning
-// @access  Private (Admin)
+
 router.put('/doubts/:id/verify', async (req, res) => {
   try {
     const doubt = await Doubt.findById(req.params.id);
@@ -54,9 +50,7 @@ router.put('/doubts/:id/verify', async (req, res) => {
   }
 });
 
-// @route   PUT /api/admin/doubts/:id/assign
-// @desc    Assign verified doubt to tutor
-// @access  Private (Admin)
+
 router.put('/doubts/:id/assign', async (req, res) => {
   try {
     const { tutorId } = req.body;
@@ -89,9 +83,7 @@ router.put('/doubts/:id/assign', async (req, res) => {
   }
 });
 
-// @route   PUT /api/admin/doubts/:id
-// @desc    Update doubt
-// @access  Private (Admin)
+
 router.put('/doubts/:id', async (req, res) => {
   try {
     const { title, content } = req.body;
@@ -112,9 +104,7 @@ router.put('/doubts/:id', async (req, res) => {
   }
 });
 
-// @route   DELETE /api/admin/doubts/:id
-// @desc    Delete doubt permanently (hard delete)
-// @access  Private (Admin)
+
 router.delete('/doubts/:id', async (req, res) => {
   try {
     const doubt = await Doubt.findById(req.params.id);
@@ -123,7 +113,7 @@ router.delete('/doubts/:id', async (req, res) => {
       return res.status(404).json({ message: 'Doubt not found' });
     }
 
-    // Permanently delete from database
+
     await Doubt.findByIdAndDelete(req.params.id);
     res.json({ message: 'Doubt permanently deleted' });
   } catch (error) {
@@ -132,9 +122,7 @@ router.delete('/doubts/:id', async (req, res) => {
   }
 });
 
-// @route   GET /api/admin/tutors
-// @desc    Get all tutors
-// @access  Private (Admin)
+
 router.get('/tutors', async (req, res) => {
   try {
     const Solution = require('../models/Solution');
@@ -143,9 +131,9 @@ router.get('/tutors', async (req, res) => {
       .populate('user', 'name email')
       .sort({ createdAt: -1 });
 
-    // Add computed fields
+
     const tutorsWithStats = await Promise.all(tutors.map(async (tutor) => {
-      // Solution.tutor references User, so we use tutor.user (which is the User ID)
+   
       const userId = tutor.user?._id || tutor.user;
       
       if (!userId) {
@@ -183,9 +171,7 @@ router.get('/tutors', async (req, res) => {
   }
 });
 
-// @route   PUT /api/admin/tutors/:id/status
-// @desc    Update tutor status
-// @access  Private (Admin)
+
 router.put('/tutors/:id/status', async (req, res) => {
   try {
     const { isActive } = req.body;
@@ -205,9 +191,7 @@ router.put('/tutors/:id/status', async (req, res) => {
   }
 });
 
-// @route   PUT /api/admin/tutors/:id/verify
-// @desc    Verify tutor
-// @access  Private (Admin)
+
 router.put('/tutors/:id/verify', async (req, res) => {
   try {
     const tutor = await Tutor.findById(req.params.id);
@@ -226,9 +210,7 @@ router.put('/tutors/:id/verify', async (req, res) => {
   }
 });
 
-// @route   DELETE /api/admin/tutors/:id
-// @desc    Delete tutor permanently
-// @access  Private (Admin)
+
 router.delete('/tutors/:id', async (req, res) => {
   try {
     const tutor = await Tutor.findById(req.params.id);
@@ -236,7 +218,7 @@ router.delete('/tutors/:id', async (req, res) => {
       return res.status(404).json({ message: 'Tutor not found' });
     }
 
-    // Delete the tutor profile
+  
     await Tutor.findByIdAndDelete(req.params.id);
 
     res.json({ message: 'Tutor deleted successfully' });
@@ -246,14 +228,12 @@ router.delete('/tutors/:id', async (req, res) => {
   }
 });
 
-// @route   GET /api/admin/users
-// @desc    Get all users
-// @access  Private (Admin)
+
 router.get('/users', async (req, res) => {
   try {
     const Doubt = require('../models/Doubt');
     
-    // Get all users with role 'user'
+ 
     const users = await User.find({ role: 'user' })
       .select('-password')
       .sort({ createdAt: -1 });
@@ -262,7 +242,7 @@ router.get('/users', async (req, res) => {
       return res.json([]);
     }
 
-    // Add computed fields
+
     const usersWithStats = await Promise.all(users.map(async (user) => {
       try {
         const totalDoubts = await Doubt.countDocuments({ 
@@ -291,9 +271,7 @@ router.get('/users', async (req, res) => {
   }
 });
 
-// @route   DELETE /api/admin/users/:id
-// @desc    Delete user permanently
-// @access  Private (Admin)
+
 router.delete('/users/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -301,16 +279,16 @@ router.delete('/users/:id', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Prevent deleting admin users
+    
     if (user.role === 'admin') {
       return res.status(403).json({ message: 'Cannot delete admin users' });
     }
 
-    // Delete all related data
+   
     const Doubt = require('../models/Doubt');
     await Doubt.deleteMany({ user: user._id });
 
-    // Delete the user
+    
     await User.findByIdAndDelete(req.params.id);
 
     res.json({ message: 'User deleted successfully' });
@@ -320,14 +298,12 @@ router.delete('/users/:id', async (req, res) => {
   }
 });
 
-// @route   GET /api/admin/stats
-// @desc    Get admin dashboard stats
-// @access  Private (Admin)
+
 router.get('/stats', async (req, res) => {
   try {
     const Solution = require('../models/Solution');
     
-    // Use Promise.all for parallel execution and better error handling
+   
     const [
       totalUsers,
       totalTutors,
